@@ -9,9 +9,17 @@ var getUserRepos = function(user) {
 
     // make a reqeust to the URL 
     fetch(apiUrl).then(function(response) {
-        response.json().then(function(data) {
+        // request was successful 
+        if (response.ok) {
+            response.json().then(function(data) {
             displayRepos(data, user);
         });
+        } else {
+            alert("Error: GitHub User Not Found");
+        }
+    })
+    .catch(function(error) {
+        alert("Unable to connect to GitHub");
     });
 };
 
@@ -29,6 +37,12 @@ function formSubmitHandler(event) {
 };
 
 function displayRepos (repos, searchTerm) {
+    // check if api returned any repos
+    if (repos.length === 0) {
+        repoContainerEl.textContent = "No Repositories found.";
+        return;
+    }
+
     // clear old content 
     repoContainerEl.textContent = "";
     repoSearchTerm.textContent = searchTerm;
@@ -62,7 +76,7 @@ function displayRepos (repos, searchTerm) {
 
         // append to container 
         repoEl.appendChild(statusEl);
-        
+
         // append container to the dom 
         repoContainerEl.appendChild(repoEl);
     }
